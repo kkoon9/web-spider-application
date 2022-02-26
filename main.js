@@ -1,9 +1,3 @@
-spider(process.argv[2], (err, filename, downloaded) => {
-  if (err) {
-    console.log(err);
-  } else if (downloaded) {
-    console.log(`Completed the download of "${filename}"`);
-  } else {
-    console.log(`"${filename}" was already downloaded`);
-  }
-});
+spider(process.argv[2], 1)
+  .then(() => console.log("Download complete"))
+  .catch((err) => console.log(err));
