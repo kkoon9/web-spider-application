@@ -4,36 +4,43 @@ const mkdirp = require("mkdirp");
 const path = require("path");
 const utilities = require("./utilities");
 
-module.exports.spider = function (url, callback) {
+function spider(url, callback) {
   const filename = utilities.urlToFilename(url);
   fs.exists(filename, (exists) => {
     //[1]
-    if (!exists) {
-      console.log(`Downloading ${url}`);
-      request(url, (err, response, body) => {
-        //[2]
-        if (err) {
-          callback(err);
-        } else {
-          mkdirp(path.dirname(filename), (err) => {
-            //[3]
-            if (err) {
-              callback(err);
-            } else {
-              fs.writeFile(filename, body, (err) => {
-                //[4]
-                if (err) {
-                  callback(err);
-                } else {
-                  callback(null, filename, true);
-                }
-              });
-            }
-          });
-        }
-      });
-    } else {
-      callback(null, filename, false);
+    if (exists) {
+      return callback(null, filename, false);
     }
+    download(url, filename, (err) => {
+      if (err) {
+        return callback(err);
+      }
+      callback(null, filename, true);
+    });
   });
-};
+}
+
+function download(url, filename, callback) {
+  console.log(`Downloading ${url}`);
+  request(url, (err, response, body) => {
+    if (err) {
+      return callback(err);
+    }
+    saveFile(filename, body, (err) => {
+      if (err) {
+        return callback(err);
+      }
+      console.log(`Downloaded and saved: ${url}`);
+      callback(null, body);
+    });
+  });
+}
+
+function saveFile(filename, contents, callback) {
+  mkdirp(path.dirname(filename), (err) => {
+    if (err) {
+      return callback(err);
+    }
+    fs.writeFile(filename, contents, callback);
+  });
+}

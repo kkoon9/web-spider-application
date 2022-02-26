@@ -1,6 +1,4 @@
-const spider = require("./spider");
-
-spider.spider(process.argv[2], (err, filename, downloaded) => {
+spider(process.argv[2], (err, filename, downloaded) => {
   if (err) {
     console.log(err);
   } else if (downloaded) {
