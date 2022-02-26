@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "async": "^3.2.3",
     "mkdirp": "^1.0.4",
     "request": "^2.88.2",
     "slug": "^5.2.0"
